@@ -15,8 +15,8 @@ var instance = axios.create({
 
 instance.interceptors.request.use(
     http => {
-        if (store.getters['login/token']) {
-            http.headers.Authorization = store.getters['login/token']
+        if (store.state.token) {
+            http.headers.Authorization = store.state.token
         }
 
         const ts = parseInt((new Date()).getTime() / 1000)
@@ -43,7 +43,7 @@ instance.interceptors.response.use(
         const code = ((res || {}).data || {}).code
         messages[code] && debug(messages[code])
         if (code == 401) {
-            store.commit('login/clear')
+            store.commit('clearLoginStatus')
             window.location.reload()
         }
         return res
@@ -64,7 +64,7 @@ instance.interceptors.response.use(
             debug(messages[status] || messages[code])
         }
         if ((status || code) == 401) {
-            store.commit('login/clear')
+            store.commit('clearLoginStatus')
             window.location.reload()
         }
         return Promise.reject(error)
