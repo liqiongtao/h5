@@ -33,6 +33,7 @@
         "postcss-px-to-viewport": "^1.1.1",
         "prettier": "^2.8.4",
         "sass": "^1.62.1",
+        "unplugin-auto-import": "^0.15.3",
         "unplugin-vue-components": "^0.24.1",
         "vite": "^4.1.4"
     }
