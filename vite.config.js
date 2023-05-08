@@ -9,14 +9,20 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { VantResolver } from 'unplugin-vue-components/resolvers'
 
-
 export default defineConfig({
     base: './',
     plugins: [
         vue(),
         vueJsx(),
         AutoImport({
-            resolvers: [VantResolver()]
+            resolvers: [VantResolver()],
+            imports: ['vue', 'vue-router', 'vuex', '@vueuse/head'],
+            dts: './auto-import.d.ts',
+            eslintrc: {
+                enabled: false,
+                globalsPropValue: true,
+                filepath: './.eslintrc-auto-import.json'
+            }
         }),
         Components({
             resolvers: [VantResolver()]
