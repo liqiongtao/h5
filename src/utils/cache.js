@@ -23,7 +23,7 @@ export const session = {
         sessionStorage.setItem(encodeKey(key), base64encode(val))
     },
     get(key) {
-        if (key == '__debug__') return 1
+        if (key == 'debug') return localStorage.getItem(key) || ''
         var val = sessionStorage.getItem(encodeKey(key)) || ''
         return val ? base64decode(val) : ''
     },
@@ -37,7 +37,7 @@ export const local = {
         localStorage.setItem(encodeKey(key), base64encode(val))
     },
     get(key) {
-        if (key == '__debug__') return 1
+        if (key == 'debug') return localStorage.getItem(key) || ''
         var val = localStorage.getItem(encodeKey(key)) || ''
         return val ? base64decode(val) : ''
     },
