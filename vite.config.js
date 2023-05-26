@@ -7,6 +7,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import postcssPxToViewport from 'postcss-px-to-viewport'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
+import vueSetupExend from 'vite-plugin-vue-setup-extend'
 import { VantResolver } from 'unplugin-vue-components/resolvers'
 
 export default defineConfig({
@@ -14,6 +15,7 @@ export default defineConfig({
     plugins: [
         vue(),
         vueJsx(),
+        vueSetupExend(),
         AutoImport({
             resolvers: [VantResolver()],
             imports: ['vue', 'vue-router', 'vuex', '@vueuse/head'],
