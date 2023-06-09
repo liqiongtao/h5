@@ -1,15 +1,14 @@
 import { createStore } from 'vuex'
 import { state, getters, actions, mutations } from './global'
 
-const files = import.meta.glob('@/views/*.module.js')
+const files = import.meta.globEager('@/views/**/*.module.js')
 
-let modules = Object.keys(files).reduce((modules, modulePath) => {
-    const path = modulePath.substr(modulePath.lastIndexOf('/'))
-    const moduleName = path.replace(/^\/(.*)\.\w+$/, '$1').split('.')[0]
-    const value = files(modulePath)
-    modules[moduleName] = value.default
-    return modules
-}, {})
+const modules = {}
+Object.keys(files).forEach((key) => {
+    const module = files[key].default
+    const moduleName = key.replace(/\/src\/views\/(.*)\/(.*).module.js/, '$1')
+    modules[moduleName] = module
+})
 
 export default createStore({
     state, getters, actions, mutations, modules
