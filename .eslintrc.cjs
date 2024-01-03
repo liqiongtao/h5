@@ -12,6 +12,11 @@ module.exports = {
     parserOptions: {
         ecmaVersion: 'latest'
     },
+    globals: {
+        Atomics: 'readonly',
+        SharedArrayBuffer: 'readonly',
+        process: true
+    },
     rules: {
         'no-console': 'off',
         'no-debugger': 'off',
