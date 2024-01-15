@@ -42,8 +42,6 @@ export const mutations = {
     clearLoginStatus(state) {
         state.token = ''
         state.username = ''
-        state.permissions = []
-        state.isSuper = false
 
         session.remove('__token__')
         session.remove('__username__')
