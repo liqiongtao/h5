@@ -7,7 +7,7 @@ body {
 }
 
 body {
-    max-width: 640PX;
+    max-width: 640px;
     margin: auto !important;
     background-color: #fff;
 }
@@ -76,6 +76,6 @@ html::-webkit-scrollbar {
     width: 3px;
 }
 
-#NOVCONSOLE div[id="__vconsole"] {
+#NOVCONSOLE div[id='__vconsole'] {
     display: none;
 }

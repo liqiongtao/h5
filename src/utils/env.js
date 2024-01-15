@@ -11,9 +11,7 @@ export const isTest = import.meta.env.MODE == 'test'
 export const isDev = import.meta.env.MODE == 'dev'
 
 // 系统浏览器
-export const isH5 = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua)
-    && !/(micromessenger)/i.test(ua)
-    && ua.match(/wxwork/i) != 'wxwork'
+export const isH5 = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua) && !/(micromessenger)/i.test(ua) && ua.match(/wxwork/i) != 'wxwork'
 
 // 是否微信
 export const isWechat = /(micromessenger)/i.test(ua) && ua.match(/wxwork/i) != 'wxwork'

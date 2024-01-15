@@ -1,32 +1,23 @@
 import axios from 'axios'
 import store from '@/store'
-import { md5, sha1 } from '@/utils/crypto'
+import { md5, sha1, encrypt, decrypt } from '@/utils/crypto'
 import { debug } from '@/utils/log'
 
 var instance = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
     headers: {
-        'Content-Type': 'application/json',
-        'X-Request-Source': 'web??'
+        'Content-Type': 'application/json'
     },
     responseType: 'json',
     timeout: 30000
 })
 
 instance.interceptors.request.use(
-    http => {
-        if (store.state.token) {
-            http.headers.Authorization = store.state.token
-        }
-
-        const ts = parseInt((new Date()).getTime() / 1000)
-
-        http.headers['X-Request-Sign'] = sha1(ts + md5(navigator.userAgent || ''))
-        http.headers['X-Request-Timestamp'] = ts
-
+    (http) => {
+        http.headers = Object.assign({}, http.headers, getHeaders())
         return http
     },
-    error => {
+    (error) => {
         return Promise.reject(error)
     }
 )
@@ -39,7 +30,7 @@ const messages = {
 }
 
 instance.interceptors.response.use(
-    res => {
+    (res) => {
         const code = ((res || {}).data || {}).code
         messages[code] && debug(messages[code])
         if (code == 401) {
@@ -48,7 +39,7 @@ instance.interceptors.response.use(
         }
         return res
     },
-    error => {
+    (error) => {
         if (typeof error == 'string') {
             if (String(error).indexOf('Network Error') !== -1) {
                 debug(messages[500])
@@ -71,18 +62,61 @@ instance.interceptors.response.use(
     }
 )
 
-export function get(uri) {
-    return instance.get(uri).then(res => {
-        var rst = (res || {}).data || {}
-        debug(`[GET] uri=${uri}`, 'result=', rst)
-        return Promise.resolve(rst)
-    })
+export function getHeaders() {
+    const ts = parseInt(new Date().getTime() / 1000)
+
+    const headers = {
+        'X-Request-AppId': md5(import.meta.env.VITE_APP_KEY),
+        'X-Request-Sign': sha1(ts + md5(navigator.userAgent || '')),
+        'X-Request-Timestamp': ts
+    }
+
+    if (store.state.token) {
+        headers.Authorization = store.state.token
+    }
+
+    return headers
 }
 
-export function post(uri, params) {
-    return instance.post(uri, params || {}).then(res => {
-        var rst = res.data || {}
-        debug(`[POST] uri=${uri}`, `params=${JSON.stringify(params)}`, 'result=', rst)
-        return Promise.resolve(rst)
-    })
+export async function get(uri) {
+    const res = await instance.get(uri)
+    var rst = (res || {}).data || {}
+    debug(`[GET] uri=${uri}`, 'result=', rst)
+    return await Promise.resolve(rst)
+}
+
+export async function post(uri, params) {
+    const res = await instance.post(uri, encrypt(params || {}))
+    var rst = res.data || {}
+    if (rst.data) {
+        rst.data = JSON.parse(decrypt(rst.data) || '{}') || {}
+    }
+    debug(`[POST] uri=${uri}`, `params=${JSON.stringify(params)}`, 'result=', rst)
+    return await Promise.resolve(rst)
+}
+
+export async function download(uri, params = {}, fileType = '') {
+    const res = await instance.post(uri, encrypt(params || {}), { responseType: 'blob' })
+
+    const blob = new Blob([res.data], { type: fileType })
+    const link = document.createElement('a')
+
+    link.download = decodeURIComponent((res.headers['content-disposition'] || '').split('filename=')[1] || '')
+    link.style.display = 'none'
+    link.href = URL.createObjectURL(blob)
+
+    document.body.appendChild(link)
+
+    link.click()
+
+    URL.revokeObjectURL(link.href)
+    document.body.removeChild(link)
+
+    debug(`[Download] uri=${uri}`, `params=${JSON.stringify(params)}`, link.download)
+
+    return await Promise.resolve({ code: 0, message: 'ok' })
+}
+
+export async function downloadExcel(uri, params = {}) {
+    return await download(uri, params, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8')
 }

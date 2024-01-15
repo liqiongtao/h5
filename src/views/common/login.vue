@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-    <van-empty image="error" description="404" />
+    <div></div>
 </template>
 
 <style scoped></style>

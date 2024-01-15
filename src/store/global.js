@@ -7,14 +7,12 @@ export const state = {
     // 授权令牌
     token: '',
     // 用户姓名
-    username: '',
-    // 权限
-    permissions: []
+    username: ''
 }
 
 export const getters = {
     isLogin(state) {
-        if (state.token || session.get('__user_token__')) {
+        if (state.token || session.get('__token__')) {
             return true
         }
         return false
@@ -24,9 +22,8 @@ export const getters = {
 export const actions = {
     // 初始化
     init({ state }) {
-        state.token = session.get('__user_token__') || ''
-        state.username = session.get('__user_username__') || ''
-        state.permissions = JSON.parse(session.get('__user_permissions__') || '[]')
+        state.token = session.get('__token__') || ''
+        state.username = session.get('__username__') || ''
 
         state.status = true
     }
@@ -36,21 +33,19 @@ export const mutations = {
     // 设置登录信息
     setLoginInfo(state, params) {
         state.token = params.token || ''
-        state.username = params.username || ''
-        state.permissions = params.permissions || []
+        state.username = params.username || params.nickname || ''
 
-        session.set('__login_token__', state.token)
-        session.set('__user_username__', state.username)
-        session.set('__user_permissions__', JSON.stringify(state.permissions))
+        session.set('__token__', state.token)
+        session.set('__username__', state.username)
     },
     // 清理登录信息
     clearLoginStatus(state) {
         state.token = ''
         state.username = ''
         state.permissions = []
+        state.isSuper = false
 
-        session.remove('__login_token__')
-        session.remove('__user_username__')
-        session.remove('__user_permissions__')
+        session.remove('__token__')
+        session.remove('__username__')
     }
 }

@@ -1,16 +1,6 @@
 import { debug } from '@/utils/log'
 
-const jsApiList = [
-    'onMenuShareAppMessage',
-    'onMenuShareTimeline',
-    'updateAppMessageShareData',
-    'updateTimelineShareData',
-    'openLocation',
-    'getLocation',
-    'hideMenuItems',
-    'showMenuItems',
-    'chooseWXPay'
-]
+const jsApiList = ['onMenuShareAppMessage', 'onMenuShareTimeline', 'updateAppMessageShareData', 'updateTimelineShareData', 'openLocation', 'getLocation', 'hideMenuItems', 'showMenuItems', 'chooseWXPay']
 
 const hideMenuItems = [
     'menuItem:copyUrl', // 复制链接
@@ -29,7 +19,11 @@ export function init({ appId, timestamp, nonceStr, signature }) {
 
     const options = {
         debug: false,
-        appId, timestamp, nonceStr, signature, jsApiList
+        appId,
+        timestamp,
+        nonceStr,
+        signature,
+        jsApiList
     }
     debug('[wechat-init]', options)
     window.wx.config(options)
@@ -45,20 +39,21 @@ export function init({ appId, timestamp, nonceStr, signature }) {
         })
     })
 
-    window.wx.error(res => {
+    window.wx.error((res) => {
         debug('[wechat-error]', res)
     })
 }
 
 export function shareInit({ title, desc, link, imgUrl }) {
     window.wx.ready(() => {
-        jsApiList.forEach(api => {
-            window.wx[api] && window.wx[api]({
-                title,
-                desc,
-                link: link || window.location.href,
-                imgUrl
-            })
+        jsApiList.forEach((api) => {
+            window.wx[api] &&
+                window.wx[api]({
+                    title,
+                    desc,
+                    link: link || window.location.href,
+                    imgUrl
+                })
         })
     })
 }
