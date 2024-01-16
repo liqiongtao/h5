@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from '@/store'
 
-import './assets/main.css'
+import './assets/main.scss'
 
 import 'vant/es/dialog/style'
 import 'vant/es/toast/style'
